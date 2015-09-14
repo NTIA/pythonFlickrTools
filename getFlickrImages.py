@@ -10,9 +10,10 @@ import urllib3
 
 # instantiate a flickrAPI object that will give us results in user-friendly JSON
 flickr = flickrapi.FlickrAPI(flickrKey, flickrSecret, cache=True, format='parsed-json')
+if not flickr.token_valid(perms='read'):
+  print "operating unauthenticated, may not have permission to see all images"
 # but not all the functions we need are available in JSON, so here's another object :/
 flickrEtree = flickrapi.FlickrAPI(flickrKey, flickrSecret, cache=True)
-
 
 class picinfo(object):
   """This class will store information about images on flickr."""
@@ -106,7 +107,7 @@ def flickrSetSearch(dct):
 
 def flickrGroupSearch(dct):
   """this function returns images from a group with no guaranteed order."""
-  photStruct = dict(enumerate(flickrEtree.walk(group_id=dct['groupNo'])))
+  photStruct = dict(enumerate(flickrEtree.walk(group_id=dct['groupNo'],sort=dct['sort'],per_page=500)))
   useful = []
   for ind in range(0, len(photStruct)):
     useful.append({'farmid': photStruct[ind].get('farm'),
@@ -202,6 +203,7 @@ if __name__ == "__main__":
   else:
     searchopts['autoCull'] = False;
   
+  searchopts['sort'] = 'date-posted-asc'
   infoFname = infoFname + '.json'
   print infoFname
   
@@ -235,8 +237,11 @@ if __name__ == "__main__":
     exit(1)
   elif 'set' in searchopts:
     outPhots, fullStruct = flickrSetSearch(searchopts)
+    print "results that match search criteria = " + str(len(outPhots))
   elif 'groupNo' in searchopts:
     outPhots, fullStruct = flickrGroupSearch(searchopts)
+    print "results that match search criteria = " + str(len(outPhots))
+    #outPhots.reverse()
   
   # if the settings dictate to download all the photos, make a list that says so
   if searchopts['numPhotos'] == 'all':
