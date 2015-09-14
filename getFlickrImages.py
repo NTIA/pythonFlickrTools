@@ -237,10 +237,10 @@ if __name__ == "__main__":
     exit(1)
   elif 'set' in searchopts:
     outPhots, fullStruct = flickrSetSearch(searchopts)
-    print "results that match search criteria = " + str(len(outPhots))
+    print "accessible photos in this set = " + str(len(outPhots))
   elif 'groupNo' in searchopts:
     outPhots, fullStruct = flickrGroupSearch(searchopts)
-    print "results that match search criteria = " + str(len(outPhots))
+    print "accessible photos in this group = " + str(len(outPhots))
     #outPhots.reverse()
   
   # if the settings dictate to download all the photos, make a list that says so
